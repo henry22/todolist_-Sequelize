@@ -6,6 +6,8 @@ const passport = require('passport')
 const db = require('../models')
 const User = db.User
 
+const bcrypt = require('bcryptjs')
+
 // 認證系統的路由
 // 登入頁面
 router.get('/login', (req, res) => {
@@ -45,12 +47,22 @@ router.post('/register', (req, res) => {
         password
       })
 
-      newUser.save()
-        .then(user => {
-          // 新增完成導回首頁
-          res.redirect('/')
+      bcrypt.genSalt(10, (err, salt) => {
+        if (err) throw err
+
+        bcrypt.hash(newUser.password, salt, (err, hash) => {
+          if (err) throw err
+
+          newUser.password = hash
+
+          newUser.save()
+            .then(user => {
+              // 新增完成導回首頁
+              res.redirect('/')
+            })
+            .catch(err => console.log(err))
         })
-        .catch(err => console.log(err))
+      })
     }
   })
 })
