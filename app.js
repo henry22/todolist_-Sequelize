@@ -11,6 +11,10 @@ const passport = require('passport')
 const port = 3000
 const db = require('./models')
 
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
 
